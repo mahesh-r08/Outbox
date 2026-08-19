@@ -36,5 +36,22 @@ export const createRedisClient = (customUrl?: string): Redis => {
   return client;
 };
 
+export const getRedisConnectionConfig = (): RedisOptions => {
+  const isTls = env.REDIS_URL.startsWith('rediss://');
+  try {
+    const parsed = new URL(env.REDIS_URL);
+    return {
+      ...redisOptions,
+      host: parsed.hostname,
+      port: parseInt(parsed.port || '6379', 10),
+      username: parsed.username ? decodeURIComponent(parsed.username) : undefined,
+      password: parsed.password ? decodeURIComponent(parsed.password) : undefined,
+      ...(isTls ? { tls: { rejectUnauthorized: false } } : {}),
+    };
+  } catch {
+    return { ...redisOptions };
+  }
+};
+
 // Global client for app caching & rate limiting
 export const redisClient = createRedisClient();

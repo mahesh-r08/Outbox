@@ -1,5 +1,5 @@
 import { Worker, Job } from 'bullmq';
-import { redisOptions } from '../lib/redis.js';
+import { getRedisConnectionConfig } from '../lib/redis.js';
 import { prisma } from '../lib/prisma.js';
 import { logger } from '../utils/logger.js';
 import { env } from '../config/env.js';
@@ -255,12 +255,7 @@ export function createEmailWorker(concurrency: number = env.WORKER_CONCURRENCY):
     },
     {
       concurrency,
-      connection: {
-        ...redisOptions,
-        host: new URL(env.REDIS_URL).hostname,
-        port: parseInt(new URL(env.REDIS_URL).port || '6379', 10),
-        password: new URL(env.REDIS_URL).password || undefined,
-      },
+      connection: getRedisConnectionConfig(),
       lockDuration: 30000,
       stalledInterval: 15000,
       maxStalledCount: 2,

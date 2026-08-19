@@ -1,5 +1,5 @@
 import { Queue, QueueEvents } from 'bullmq';
-import { redisOptions } from '../lib/redis.js';
+import { getRedisConnectionConfig } from '../lib/redis.js';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
 import type { SendEmailJobData } from '../types/index.js';
@@ -7,12 +7,7 @@ import type { SendEmailJobData } from '../types/index.js';
 export const EMAIL_QUEUE_NAME = 'email-send';
 
 export const emailQueue = new Queue<SendEmailJobData>(EMAIL_QUEUE_NAME, {
-  connection: {
-    ...redisOptions,
-    host: new URL(env.REDIS_URL).hostname,
-    port: parseInt(new URL(env.REDIS_URL).port || '6379', 10),
-    password: new URL(env.REDIS_URL).password || undefined,
-  },
+  connection: getRedisConnectionConfig(),
   defaultJobOptions: {
     attempts: 3,
     backoff: {
@@ -25,12 +20,7 @@ export const emailQueue = new Queue<SendEmailJobData>(EMAIL_QUEUE_NAME, {
 });
 
 export const emailQueueEvents = new QueueEvents(EMAIL_QUEUE_NAME, {
-  connection: {
-    ...redisOptions,
-    host: new URL(env.REDIS_URL).hostname,
-    port: parseInt(new URL(env.REDIS_URL).port || '6379', 10),
-    password: new URL(env.REDIS_URL).password || undefined,
-  },
+  connection: getRedisConnectionConfig(),
 });
 
 emailQueueEvents.on('failed', ({ jobId, failedReason }) => {
