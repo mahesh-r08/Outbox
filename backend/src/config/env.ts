@@ -51,11 +51,10 @@ if (!parsed.success) {
   process.exit(1);
 }
 
-// In production, enforce that real Google OAuth secrets and database URLs are explicitly set
+// In production, warn if Google OAuth secrets are missing but don't crash server boot
 if (parsed.data.NODE_ENV === 'production') {
   if (!parsed.data.GOOGLE_CLIENT_ID || !parsed.data.GOOGLE_CLIENT_SECRET) {
-    console.error('❌ FATAL: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be configured in production mode.');
-    process.exit(1);
+    console.warn('⚠️ WARNING: GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is missing. Google OAuth login will be disabled until configured.');
   }
 }
 

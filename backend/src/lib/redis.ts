@@ -14,7 +14,12 @@ export const redisOptions: RedisOptions = {
 
 export const createRedisClient = (customUrl?: string): Redis => {
   const url = customUrl || env.REDIS_URL;
-  const client = new Redis(url, redisOptions);
+  const isTls = url.startsWith('rediss://');
+  const options: RedisOptions = {
+    ...redisOptions,
+    ...(isTls ? { tls: { rejectUnauthorized: false } } : {}),
+  };
+  const client = new Redis(url, options);
 
   client.on('connect', () => {
     logger.info('Connected to Redis');
