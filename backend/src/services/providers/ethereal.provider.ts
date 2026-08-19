@@ -21,22 +21,38 @@ export class EtherealEmailProvider implements EmailProvider {
       return existing;
     }
 
-    const transporter = nodemailer.createTransport({
-      host: sender.smtpHost || 'smtp.ethereal.email',
-      port: sender.smtpPort || 587,
-      secure: sender.smtpPort === 465,
-      auth: {
-        user: sender.smtpUser,
-        pass: sender.smtpPassword,
-      },
-      connectionTimeout: 5000,
-      greetingTimeout: 5000,
-      socketTimeout: 10000,
-      pool: true,
-      maxConnections: 5,
-      maxMessages: 100,
-    });
+    const isGmail =
+      sender.smtpHost?.toLowerCase().includes('gmail') ||
+      sender.email?.toLowerCase().endsWith('@gmail.com') ||
+      sender.smtpUser?.toLowerCase().endsWith('@gmail.com');
 
+    const transportConfig: any = isGmail
+      ? {
+          service: 'gmail',
+          auth: {
+            user: sender.smtpUser,
+            pass: sender.smtpPassword,
+          },
+          tls: { rejectUnauthorized: false },
+        }
+      : {
+          host: sender.smtpHost || 'smtp.ethereal.email',
+          port: sender.smtpPort || 587,
+          secure: sender.smtpPort === 465,
+          auth: {
+            user: sender.smtpUser,
+            pass: sender.smtpPassword,
+          },
+          tls: { rejectUnauthorized: false },
+          connectionTimeout: 10000,
+          greetingTimeout: 10000,
+          socketTimeout: 15000,
+          pool: true,
+          maxConnections: 5,
+          maxMessages: 100,
+        };
+
+    const transporter = nodemailer.createTransport(transportConfig);
     this.transporterPool.set(sender.id, transporter);
     return transporter;
   }
