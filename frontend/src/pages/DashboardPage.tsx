@@ -14,6 +14,14 @@ import {
   Zap,
   Activity,
   Layers,
+  BarChart3,
+  CalendarClock,
+  Send,
+  CheckCircle2,
+  Clock,
+  Users,
+  Cpu,
+  Target,
 } from 'lucide-react';
 import { getCurrentUser, logoutUser } from '../api/authApi.js';
 import { getMetrics } from '../api/emailApi.js';
@@ -202,33 +210,36 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('funnel')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'funnel'
                   ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              📊 Performance Funnel &amp; Overview
+              <BarChart3 className="w-3.5 h-3.5" />
+              Performance Funnel &amp; Overview
             </button>
             <button
               onClick={() => setActiveTab('scheduled')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'scheduled'
                   ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              📅 Scheduled Queue ({scheduledCount})
+              <CalendarClock className="w-3.5 h-3.5" />
+              Scheduled Queue ({scheduledCount})
             </button>
             <button
               onClick={() => setActiveTab('sent')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'sent'
                   ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              ✈️ Sent History ({sentCount})
+              <Send className="w-3.5 h-3.5" />
+              Sent History ({sentCount})
             </button>
           </div>
 
@@ -384,7 +395,7 @@ export const DashboardPage: React.FC = () => {
               <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-1 shadow-2xs relative">
                 <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span>Delivery rate</span>
-                  <span className="text-emerald-600 font-bold text-xs">✓</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 </div>
                 <div className="text-xl font-extrabold text-emerald-600">
                   {deliveryRate}%
@@ -398,7 +409,7 @@ export const DashboardPage: React.FC = () => {
               <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-1 shadow-2xs relative">
                 <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span>Hourly rate limit</span>
-                  <span className="text-slate-400 text-xs">⚡</span>
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
                 </div>
                 <div className="text-xl font-extrabold text-slate-900">
                   200/hr
@@ -412,7 +423,7 @@ export const DashboardPage: React.FC = () => {
               <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-1 shadow-2xs relative">
                 <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span>Connected senders</span>
-                  <span className="text-emerald-500 font-bold text-xs">📬</span>
+                  <Users className="w-3.5 h-3.5 text-emerald-500" />
                 </div>
                 <div className="text-xl font-extrabold text-slate-900">
                   {senders.length}
@@ -425,7 +436,7 @@ export const DashboardPage: React.FC = () => {
               <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-1 shadow-2xs relative">
                 <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span>Delay slot</span>
-                  <span className="text-slate-400 text-xs">⏱️</span>
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
                 </div>
                 <div className="text-xl font-extrabold text-slate-900">
                   2.0s
@@ -438,7 +449,7 @@ export const DashboardPage: React.FC = () => {
               <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-1 shadow-2xs relative">
                 <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span>Worker slots</span>
-                  <span className="text-sky-500 text-xs">⚙️</span>
+                  <Cpu className="w-3.5 h-3.5 text-sky-500" />
                 </div>
                 <div className="text-xl font-extrabold text-slate-900">
                   5 workers
@@ -451,7 +462,7 @@ export const DashboardPage: React.FC = () => {
               <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-1 shadow-2xs relative">
                 <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span>Active campaigns</span>
-                  <span className="text-emerald-500 text-xs">🎯</span>
+                  <Target className="w-3.5 h-3.5 text-emerald-500" />
                 </div>
                 <div className="text-xl font-extrabold text-slate-900">
                   {sentCount > 0 ? 1 : 0}
@@ -464,7 +475,7 @@ export const DashboardPage: React.FC = () => {
               <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-1 shadow-2xs relative">
                 <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span>Total leads reached</span>
-                  <span className="text-slate-400 text-xs">👥</span>
+                  <Users className="w-3.5 h-3.5 text-slate-400" />
                 </div>
                 <div className="text-xl font-extrabold text-slate-900">
                   {sentCount}
