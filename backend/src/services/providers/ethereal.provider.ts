@@ -29,6 +29,9 @@ export class EtherealEmailProvider implements EmailProvider {
         user: sender.smtpUser,
         pass: sender.smtpPassword,
       },
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
+      socketTimeout: 10000,
       pool: true,
       maxConnections: 5,
       maxMessages: 100,
@@ -39,19 +42,25 @@ export class EtherealEmailProvider implements EmailProvider {
   }
 
   /**
-   * Verify SMTP credentials for a sender mailbox.
+   * Verify SMTP credentials for a sender mailbox with fast timeout.
    */
   public async verifyConnection(sender: SenderCredentials): Promise<boolean> {
     try {
       const transporter = this.getTransporter(sender);
-      await transporter.verify();
+      // Fast timeout of 4 seconds so API requests never hang
+      const verifyPromise = transporter.verify();
+      const timeoutPromise = new Promise<boolean>((_, reject) =>
+        setTimeout(() => reject(new Error('Connection timeout (4s)')), 4000)
+      );
+
+      await Promise.race([verifyPromise, timeoutPromise]);
       return true;
     } catch (err: any) {
-      logger.error(
+      logger.warn(
         { senderId: sender.id, err: err.message },
-        'SMTP connection verification failed'
+        'SMTP connection verification warning — proceeding with registration'
       );
-      throw new Error(`SMTP Verification Failed: ${err.message}`);
+      return false;
     }
   }
 
